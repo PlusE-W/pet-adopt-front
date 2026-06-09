@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>申请管理 - 后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 管理员后台</div>
+      <ul class="nav-menu">
+        <li><a href="pet-manage.html">宠物管理</a></li>
+        <li><a href="apply-manage.html">申请管理</a></li>
+        <li><a href="user-manage.html">用户管理</a></li>
+        <li><a href="comment-manage.html">评论管理</a></li>
+        <li><a href="../index.html">返回首页</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="table-box">
+      <h2>领养申请列表</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>申请ID</th>
+            <th>申请人</th>
+            <th>宠物</th>
+            <th>申请理由</th>
+            <th>联系地址</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="applyTable">
+          <!-- 动态渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // 管理员权限验证
+    (function() {
+      const isAdmin = sessionStorage.getItem("isAdmin");
+      if (!isAdmin || isAdmin !== "true") {
+        alert("无权访问，请先通过管理员入口登录！");
+        location.href = "../login.html";
+        return;
+      }
+    })();
+
+    // 渲染申请列表
+    function renderTable(list) {
+      let html = "";
+      list.forEach(apply=>{
+        html += `
+        <tr>
+          <td>${apply.id}</td>
+          <td>${apply.nickname}</td>
+          <td>${apply.petName}</td>
+          <td>${apply.reason}</td>
+          <td>${apply.address}</td>
+          <td>${apply.status}</td>
+          <td>
+            ${apply.status === '待审核' ? `
+              <button class="btn" onclick="handleApply(${apply.id}, 'pass')">通过</button>
+              <button class="btn" style="background:#f44336" onclick="handleApply(${apply.id}, 'reject')">驳回</button>
+            ` : '已处理'}
+          </td>
+        </tr>
+        `;
+      });
+      document.getElementById("applyTable").innerHTML = html;
+    }
+
+    // 调用后端接口获取申请列表
+    async function loadApplies() {
+      const res = await get("/adopt/list");
+      if(res.code === 200){
+        renderTable(res.data);
+      }
+    }
+
+    // 处理申请
+    async function handleApply(id, action) {
+      if(!confirm(`确定要${action==='pass'?'通过':'驳回'}该申请吗？`)) return;
+      const res = await put(`/adopt/update?id=${id}&action=${action}`);
+      if(res.code === 200){
+        toast("操作成功");
+        loadApplies();
+      }else{
+        toast(res.msg, false);
+      }
+    }
+
+    // 页面加载时调用
+    loadApplies();
+  </script>
+</body>
+</html>

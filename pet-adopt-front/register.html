@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>注册 - 宠物领养平台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="auth-page">
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 爱心领养</div>
+      <ul class="nav-menu">
+        <li><a href="index.html">首页</a></li>
+        <li><a href="login.html">登录</a></li>
+        <li><a href="register.html">注册</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <div class="form-box">
+      <h2>创建账号</h2>
+      <form id="regForm">
+        <div class="form-item input-with-icon">
+          <label>用户名</label>
+          <span class="input-icon">👤</span>
+          <input type="text" id="username" placeholder="请输入用户名（至少3位）" required autocomplete="username">
+          <div class="tip" id="tip1"></div>
+        </div>
+
+        <div class="form-item input-with-icon">
+          <label>密码</label>
+          <span class="input-icon">🔒</span>
+          <input type="password" id="password" placeholder="请输入密码（至少6位）" required autocomplete="new-password">
+          <div class="password-strength">
+            <div class="password-strength-bar" id="strengthBar"></div>
+          </div>
+          <div class="tip" id="passwordTip"></div>
+        </div>
+
+        <div class="form-item input-with-icon">
+          <label>确认密码</label>
+          <span class="input-icon">🔒</span>
+          <input type="password" id="repwd" placeholder="请再次输入密码" required autocomplete="new-password">
+          <div class="tip" id="tip2"></div>
+        </div>
+
+        <div class="form-item input-with-icon">
+          <label>昵称</label>
+          <span class="input-icon">✨</span>
+          <input type="text" id="nickname" placeholder="请输入昵称" required>
+        </div>
+
+        <div class="form-item input-with-icon">
+          <label>手机号</label>
+          <span class="input-icon">📱</span>
+          <input type="tel" id="phone" placeholder="请输入手机号" required pattern="[0-9]{11}">
+          <div class="tip" id="phoneTip"></div>
+        </div>
+
+        <div class="form-item">
+          <label class="checkbox-wrapper">
+            <input type="checkbox" id="agreeTerms" required>
+            <span>我已阅读并同意<a href="#" style="color:#ff7f50">《用户协议》</a>和<a href="#" style="color:#ff7f50">《隐私政策》</a></span>
+          </label>
+        </div>
+
+        <div class="form-item">
+          <button type="submit" class="btn" style="width:100%" id="registerBtn">
+            <span>立即注册</span>
+          </button>
+        </div>
+      </form>
+
+      <div style="text-align:center;margin-top:2rem">
+        已有账号？<a href="login.html" style="color:#ff7f50;font-weight:600">立即登录</a>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    const username = document.getElementById("username");
+    const password = document.getElementById("password");
+    const repwd = document.getElementById("repwd");
+    const phone = document.getElementById("phone");
+    const tip1 = document.getElementById("tip1");
+    const tip2 = document.getElementById("tip2");
+    const passwordTip = document.getElementById("passwordTip");
+    const phoneTip = document.getElementById("phoneTip");
+    const strengthBar = document.getElementById("strengthBar");
+    const registerBtn = document.getElementById("registerBtn");
+
+    // 用户名校验
+    username.addEventListener("input", () => {
+      if (username.value.length > 0 && username.value.length < 3) {
+        tip1.innerText = "用户名至少3位";
+        username.parentElement.classList.add("error");
+        username.parentElement.classList.remove("success");
+      } else if (username.value.length >= 3) {
+        tip1.innerText = "✓ 用户名可用";
+        tip1.style.color = "#51cf66";
+        username.parentElement.classList.remove("error");
+        username.parentElement.classList.add("success");
+      } else {
+        tip1.innerText = "";
+        username.parentElement.classList.remove("error", "success");
+      }
+    });
+
+    // 密码强度检测
+    password.addEventListener("input", () => {
+      const pwd = password.value;
+      let strength = 0;
+      
+      if (pwd.length >= 6) strength++;
+      if (pwd.length >= 10) strength++;
+      if (/[a-z]/.test(pwd) && /[A-Z]/.test(pwd)) strength++;
+      if (/\d/.test(pwd)) strength++;
+      if (/[^a-zA-Z0-9]/.test(pwd)) strength++;
+
+      strengthBar.className = "password-strength-bar";
+      
+      if (pwd.length === 0) {
+        strengthBar.style.width = "0";
+      } else if (strength <= 2) {
+        strengthBar.classList.add("weak");
+        passwordTip.innerText = "密码强度：弱";
+        passwordTip.style.color = "#ff6b6b";
+      } else if (strength <= 3) {
+        strengthBar.classList.add("medium");
+        passwordTip.innerText = "密码强度：中等";
+        passwordTip.style.color = "#ffa94d";
+      } else {
+        strengthBar.classList.add("strong");
+        passwordTip.innerText = "密码强度：强";
+        passwordTip.style.color = "#51cf66";
+      }
+
+      // 验证密码长度
+      if (pwd.length > 0 && pwd.length < 6) {
+        password.parentElement.classList.add("error");
+        password.parentElement.classList.remove("success");
+      } else if (pwd.length >= 6) {
+        password.parentElement.classList.remove("error");
+        password.parentElement.classList.add("success");
+      } else {
+        password.parentElement.classList.remove("error", "success");
+      }
+    });
+
+    // 确认密码校验
+    repwd.addEventListener("input", () => {
+      if (repwd.value.length > 0 && password.value !== repwd.value) {
+        tip2.innerText = "两次密码不一致";
+        repwd.parentElement.classList.add("error");
+        repwd.parentElement.classList.remove("success");
+      } else if (repwd.value.length > 0 && password.value === repwd.value) {
+        tip2.innerText = "✓ 密码一致";
+        tip2.style.color = "#51cf66";
+        repwd.parentElement.classList.remove("error");
+        repwd.parentElement.classList.add("success");
+      } else {
+        tip2.innerText = "";
+        repwd.parentElement.classList.remove("error", "success");
+      }
+    });
+
+    // 手机号校验
+    phone.addEventListener("input", () => {
+      const phoneRegex = /^1[3-9]\d{9}$/;
+      if (phone.value.length > 0 && !phoneRegex.test(phone.value)) {
+        phoneTip.innerText = "请输入有效的手机号";
+        phone.parentElement.classList.add("error");
+        phone.parentElement.classList.remove("success");
+      } else if (phoneRegex.test(phone.value)) {
+        phoneTip.innerText = "✓ 手机号格式正确";
+        phoneTip.style.color = "#51cf66";
+        phone.parentElement.classList.remove("error");
+        phone.parentElement.classList.add("success");
+      } else {
+        phoneTip.innerText = "";
+        phone.parentElement.classList.remove("error", "success");
+      }
+    });
+
+    document.getElementById("regForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      
+      // 最终验证
+      if (username.value.length < 3) {
+        toast("用户名至少3位", false);
+        username.focus();
+        return;
+      }
+
+      if (password.value.length < 6) {
+        toast("密码至少6位", false);
+        password.focus();
+        return;
+      }
+
+      if (password.value !== repwd.value) {
+        toast("两次密码不一致", false);
+        repwd.focus();
+        return;
+      }
+
+      const phoneRegex = /^1[3-9]\d{9}$/;
+      if (!phoneRegex.test(phone.value)) {
+        toast("请输入有效的手机号", false);
+        phone.focus();
+        return;
+      }
+
+      if (!document.getElementById("agreeTerms").checked) {
+        toast("请同意用户协议和隐私政策", false);
+        return;
+      }
+
+      // 显示加载状态
+      registerBtn.disabled = true;
+      registerBtn.innerHTML = '<span class="loading"></span> 注册中...';
+
+      const data = {
+        username: username.value,
+        password: password.value,
+        nickname: document.getElementById("nickname").value,
+        phone: phone.value
+      };
+
+      try {
+        // 调用后端注册接口
+        const res = await post("/user/register", data);
+        
+        if (res.code === 200) {
+          toast("注册成功，请登录");
+          
+          // 添加成功动画
+          document.querySelector('.form-box').classList.add('success-animation');
+          
+          setTimeout(() => {
+            location.href = "login.html";
+          }, 800);
+        } else {
+          toast(res.msg, false);
+          registerBtn.disabled = false;
+          registerBtn.innerHTML = '<span>立即注册</span>';
+        }
+      } catch (error) {
+        toast("网络错误，请稍后重试", false);
+        registerBtn.disabled = false;
+        registerBtn.innerHTML = '<span>立即注册</span>';
+      }
+    });
+  </script>
+</body>
+</html>

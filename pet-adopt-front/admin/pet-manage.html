@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物管理 - 后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 管理员后台</div>
+      <ul class="nav-menu">
+        <li><a href="pet-manage.html">宠物管理</a></li>
+        <li><a href="apply-manage.html">申请管理</a></li>
+        <li><a href="user-manage.html">用户管理</a></li>
+        <li><a href="comment-manage.html">评论管理</a></li>
+        <li><a href="../index.html">返回首页</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="table-box">
+      <h2>宠物管理 <button class="btn" style="float:right" onclick="openAdd()">新增宠物</button></h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>种类</th>
+            <th>年龄</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="petTable">
+          <!-- 动态渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // 管理员权限验证
+    (function() {
+      const isAdmin = sessionStorage.getItem("isAdmin");
+      if (!isAdmin || isAdmin !== "true") {
+        alert("无权访问，请先通过管理员入口登录！");
+        location.href = "../login.html";
+        return;
+      }
+    })();
+
+    // 模拟数据
+    let pets = [
+      {id:1, name:"橘猫", type:"猫", age:"1岁", status:"待领养"},
+      {id:2, name:"金毛", type:"狗", age:"2岁", status:"待领养"}
+    ];
+
+    function renderTable(list) {
+      let html = "";
+      list.forEach(p=>{
+        html += `
+        <tr>
+          <td>${p.id}</td>
+          <td>${p.name}</td>
+          <td>${p.type}</td>
+          <td>${p.age}</td>
+          <td>${p.status}</td>
+          <td>
+            <button class="btn" onclick="editPet(${p.id})">编辑</button>
+            <button class="btn" style="background:#f44336" onclick="delPet(${p.id})">删除</button>
+          </td>
+        </tr>
+        `;
+      });
+      document.getElementById("petTable").innerHTML = html;
+    }
+
+    // 初始化
+    renderTable(pets);
+
+    function openAdd() {
+      alert("弹出新增表单（对接后端后实现）");
+    }
+    function editPet(id) {
+      alert("编辑宠物"+id);
+    }
+    function delPet(id) {
+      if(confirm("确定删除？")){
+        // 调用删除接口
+        get("/pet/delete?id="+id).then(res=>{
+          if(res.code===200) toast("删除成功");
+        });
+      }
+    }
+  </script>
+</body>
+</html>

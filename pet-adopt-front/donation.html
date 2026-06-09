@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>爱心捐赠 - 宠物领养平台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 导航栏顶部独立图片 -->
+  <div class="top-fixed-img">
+    <img src="images/banner1.jpg" alt="顶部海报">
+  </div>
+
+  <!-- 导航栏 -->
+  <header>
+    <div class="nav">
+      <div class="logo">爱心宠物领养</div>
+      <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <a href="process.html">领养流程</a>
+        <a href="story.html">领养故事</a>
+        <a href="about.html">关于我们</a>
+        <a href="login.html">登录</a>
+        <a href="register.html">注册</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1>💝 爱心捐赠</h1>
+      <p>您的每一份爱心，都能改变一个小生命的命运</p>
+    </div>
+
+    <!-- 捐赠意义 -->
+    <div class="donation-intro">
+      <div class="intro-content">
+        <h2>为什么需要您的捐赠？</h2>
+        <p>流浪动物的救助和养护需要大量的资金支持。从日常的食物、医疗到救助站的运营维护，每一笔费用都至关重要。您的捐赠将直接用于改善流浪动物的生活条件，帮助它们重获健康和温暖。</p>
+        
+        <div class="impact-grid">
+          <div class="impact-item">
+            <div class="impact-icon">🏥</div>
+            <h3>医疗救助</h3>
+            <p>为受伤和生病的动物提供及时治疗</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">🍖</div>
+            <h3>日常饮食</h3>
+            <p>确保每只动物都能吃饱吃好</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">🏠</div>
+            <h3>住所维护</h3>
+            <p>改善救助站设施，提供舒适环境</p>
+          </div>
+          <div class="impact-item">
+            <div class="impact-icon">💉</div>
+            <h3>疫苗接种</h3>
+            <p>定期防疫，保障动物健康</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 捐赠用途说明 -->
+    <div class="usage-section">
+      <h2 class="section-title">捐赠用途</h2>
+      <div class="usage-grid">
+        <div class="usage-card">
+          <div class="usage-header">
+            <div class="usage-icon">💊</div>
+            <h3>医疗费用 (40%)</h3>
+          </div>
+          <ul class="usage-list">
+            <li>疾病治疗和手术</li>
+            <li>常规体检和检查</li>
+            <li>药品和医疗器械</li>
+            <li>绝育手术费用</li>
+          </ul>
+          <div class="usage-amount">平均每月：¥20,000</div>
+        </div>
+        
+        <div class="usage-card">
+          <div class="usage-header">
+            <div class="usage-icon">🍽️</div>
+            <h3>日常饲料 (30%)</h3>
+          </div>
+          <ul class="usage-list">
+            <li>猫粮狗粮采购</li>
+            <li>营养补充剂</li>
+            <li>零食和玩具</li>
+            <li>特殊饮食需求</li>
+          </ul>
+          <div class="usage-amount">平均每月：¥15,000</div>
+        </div>
+        
+        <div class="usage-card">
+          <div class="usage-header">
+            <div class="usage-icon">🏢</div>
+            <h3>运营维护 (20%)</h3>
+          </div>
+          <ul class="usage-list">
+            <li>场地租金和维护</li>
+            <li>水电费支出</li>
+            <li>清洁用品</li>
+            <li>设备更新</li>
+          </ul>
+          <div class="usage-amount">平均每月：¥10,000</div>
+        </div>
+        
+        <div class="usage-card">
+          <div class="usage-header">
+            <div class="usage-icon">📢</div>
+            <h3>宣传活动 (10%)</h3>
+          </div>
+          <ul class="usage-list">
+            <li>领养活动组织</li>
+            <li>宣传物料制作</li>
+            <li>媒体推广</li>
+            <li>志愿者培训</li>
+          </ul>
+          <div class="usage-amount">平均每月：¥5,000</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 捐赠方式 -->
+    <div class="donation-methods">
+      <h2 class="section-title">捐赠方式</h2>
+      <div class="methods-grid">
+        <div class="method-card featured">
+          <div class="method-badge">推荐</div>
+          <div class="method-icon">💳</div>
+          <h3>在线捐赠</h3>
+          <p>安全便捷，支持多种支付方式</p>
+          <div class="donation-amounts">
+            <button class="amount-btn" data-amount="50">¥50</button>
+            <button class="amount-btn" data-amount="100">¥100</button>
+            <button class="amount-btn active" data-amount="200">¥200</button>
+            <button class="amount-btn" data-amount="500">¥500</button>
+            <button class="amount-btn" data-amount="1000">¥1000</button>
+          </div>
+          <div class="custom-amount">
+            <input type="number" id="customAmount" placeholder="自定义金额" min="1">
+          </div>
+          <button class="btn donate-btn" style="width: 100%; margin-top: 1rem;">立即捐赠</button>
+          <p class="method-note">✓ 即时到账 ✓ 电子证书 ✓ 可开发票</p>
+        </div>
+        
+        <div class="method-card">
+          <div class="method-icon">🏦</div>
+          <h3>银行转账</h3>
+          <div class="bank-info">
+            <p><strong>户名：</strong>爱心宠物领养基金会</p>
+            <p><strong>账号：</strong>6222 **** **** 1234</p>
+            <p><strong>开户行：</strong>中国工商银行北京分行</p>
+          </div>
+          <p class="method-note">转账时请备注姓名+联系方式</p>
+        </div>
+        
+        <div class="method-card">
+          <div class="method-icon">📱</div>
+          <h3>扫码捐赠</h3>
+          <div class="qr-placeholder">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📱</div>
+            <p>微信/支付宝扫码</p>
+          </div>
+          <p class="method-note">支持微信、支付宝扫码支付</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 捐赠荣誉榜 -->
+    <div class="honor-section">
+      <h2 class="section-title">爱心荣誉榜</h2>
+      <div class="honor-grid">
+        <div class="honor-item gold">
+          <div class="honor-rank">🥇</div>
+          <h3>月度爱心冠军</h3>
+          <p class="donor-name">张先生</p>
+          <p class="donor-amount">累计捐赠：¥10,000</p>
+        </div>
+        <div class="honor-item silver">
+          <div class="honor-rank">🥈</div>
+          <h3>热心公益奖</h3>
+          <p class="donor-name">李女士</p>
+          <p class="donor-amount">累计捐赠：¥8,500</p>
+        </div>
+        <div class="honor-item bronze">
+          <div class="honor-rank">🥉</div>
+          <h3>爱心使者</h3>
+          <p class="donor-name">王先生</p>
+          <p class="donor-amount">累计捐赠：¥6,000</p>
+        </div>
+      </div>
+      <p class="honor-note">感谢所有爱心人士的慷慨捐赠！每一份爱心都值得被铭记 💕</p>
+    </div>
+
+    <!-- 透明度承诺 -->
+    <div class="transparency-section">
+      <h2 class="section-title">透明度承诺</h2>
+      <div class="transparency-content">
+        <div class="transparency-item">
+          <div class="transparency-icon">📊</div>
+          <h3>财务公开</h3>
+          <p>每月公布捐赠收支明细，接受社会监督</p>
+        </div>
+        <div class="transparency-item">
+          <div class="transparency-icon">📝</div>
+          <h3>专款专用</h3>
+          <p>所有捐赠款项专用于流浪动物救助，绝不挪用</p>
+        </div>
+        <div class="transparency-item">
+          <div class="transparency-icon">🔍</div>
+          <h3>第三方审计</h3>
+          <p>定期邀请第三方机构进行财务审计</p>
+        </div>
+        <div class="transparency-item">
+          <div class="transparency-icon">📧</div>
+          <h3>反馈报告</h3>
+          <p>向捐赠者定期发送项目进展和资金使用报告</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer>
+    <div class="footer-wrap">
+      <div class="footer-item">
+        <h4>联系我们</h4>
+        <p>📧 邮箱：adopt@petlove.com</p>
+        <p>📍 地址：爱心市温暖街123号宠物救助中心</p>
+        <p>📱 热线：400-123-4567</p>
+      </div>
+      <div class="footer-item">
+        <h4>平台服务</h4>
+        <p>领养流程指南</p>
+        <p>宠物救助合作</p>
+        <p>爱心捐赠通道</p>
+      </div>
+      <div class="footer-item">
+        <h4>关注我们</h4>
+        <p>微博：@爱心领养平台</p>
+        <p>公众号：宠物之家救助站</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2025 爱心宠物领养平台 版权所有 | 京ICP备XXXXXXXX号
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // 捐赠金额选择
+    const amountBtns = document.querySelectorAll('.amount-btn');
+    const customAmount = document.getElementById('customAmount');
+    let selectedAmount = 200;
+
+    amountBtns.forEach(btn => {
+      btn.addEventListener('click', function() {
+        amountBtns.forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        selectedAmount = this.dataset.amount;
+        customAmount.value = '';
+      });
+    });
+
+    customAmount.addEventListener('input', function() {
+      if (this.value) {
+        amountBtns.forEach(b => b.classList.remove('active'));
+        selectedAmount = this.value;
+      }
+    });
+
+    // 捐赠按钮点击
+    document.querySelector('.donate-btn').addEventListener('click', function() {
+      const amount = customAmount.value || selectedAmount;
+      if (!amount || amount <= 0) {
+        toast('请输入有效的捐赠金额', false);
+        return;
+      }
+      toast(`感谢您的爱心！捐赠 ¥${amount} 成功`);
+      setTimeout(() => {
+        location.href = 'about.html';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

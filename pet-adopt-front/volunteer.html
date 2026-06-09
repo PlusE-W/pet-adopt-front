@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成为志愿者 - 宠物领养平台</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 导航栏顶部独立图片 -->
+  <div class="top-fixed-img">
+    <img src="images/banner1.jpg" alt="顶部海报">
+  </div>
+
+  <!-- 导航栏 -->
+  <header>
+    <div class="nav">
+      <div class="logo">爱心宠物领养</div>
+      <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <a href="process.html">领养流程</a>
+        <a href="story.html">领养故事</a>
+        <a href="about.html">关于我们</a>
+        <a href="login.html">登录</a>
+        <a href="register.html">注册</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 页面标题 -->
+    <div class="page-header">
+      <h1>🤝 成为志愿者</h1>
+      <p>用爱心和行动，帮助更多流浪动物找到温暖的家</p>
+    </div>
+
+    <!-- 志愿者介绍 -->
+    <div class="volunteer-intro">
+      <div class="intro-content">
+        <h2>为什么成为志愿者？</h2>
+        <p>作为志愿者，你将直接参与到救助流浪动物的行动中，每一份付出都能改变一个小生命的命运。无论你是学生、上班族还是退休人员，只要有爱心和时间，都可以成为我们的一员。</p>
+        
+        <div class="benefits-grid">
+          <div class="benefit-item">
+            <div class="benefit-icon">💝</div>
+            <h3>传递爱心</h3>
+            <p>直接帮助流浪动物，感受生命的美好</p>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">👥</div>
+            <h3>结识伙伴</h3>
+            <p>与志同道合的朋友一起，共同成长</p>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">📚</div>
+            <h3>学习知识</h3>
+            <p>掌握科学的养宠知识和救助技能</p>
+          </div>
+          <div class="benefit-item">
+            <div class="benefit-icon">🎖️</div>
+            <h3>获得认可</h3>
+            <p>获得志愿服务证书和社会认可</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 志愿者工作内容 -->
+    <div class="work-section">
+      <h2 class="section-title">志愿者工作内容</h2>
+      <div class="work-grid">
+        <div class="work-card">
+          <div class="work-icon">🐾</div>
+          <h3>日常照料</h3>
+          <ul>
+            <li>喂食和清洁</li>
+            <li>陪伴玩耍</li>
+            <li>观察健康状况</li>
+            <li>记录生活习性</li>
+          </ul>
+        </div>
+        <div class="work-card">
+          <div class="work-icon">📅</div>
+          <h3>活动组织</h3>
+          <ul>
+            <li>策划领养活动</li>
+            <li>现场协调管理</li>
+            <li>宣传推广工作</li>
+            <li>参与者接待</li>
+          </ul>
+        </div>
+        <div class="work-card">
+          <div class="work-icon">📢</div>
+          <h3>宣传推广</h3>
+          <ul>
+            <li>社交媒体运营</li>
+            <li>撰写宣传文案</li>
+            <li>拍摄照片视频</li>
+            <li>设计宣传物料</li>
+          </ul>
+        </div>
+        <div class="work-card">
+          <div class="work-icon">💼</div>
+          <h3>专业支持</h3>
+          <ul>
+            <li>医疗护理协助</li>
+            <li>心理咨询服务</li>
+            <li>法律事务咨询</li>
+            <li>技术支持维护</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 申请表单 -->
+    <div class="apply-section">
+      <h2 class="section-title">志愿者申请</h2>
+      <div class="form-box" style="max-width: 700px;">
+        <form id="volunteerForm">
+          <div class="form-item">
+            <label>姓名 *</label>
+            <input type="text" placeholder="请输入您的姓名" required>
+          </div>
+          
+          <div class="form-item">
+            <label>手机号 *</label>
+            <input type="tel" placeholder="请输入您的手机号" required pattern="[0-9]{11}">
+          </div>
+          
+          <div class="form-item">
+            <label>邮箱</label>
+            <input type="email" placeholder="请输入您的邮箱">
+          </div>
+          
+          <div class="form-item">
+            <label>年龄 *</label>
+            <input type="number" placeholder="请输入您的年龄" min="16" max="80" required>
+          </div>
+          
+          <div class="form-item">
+            <label>职业</label>
+            <input type="text" placeholder="请输入您的职业">
+          </div>
+          
+          <div class="form-item">
+            <label>所在地区 *</label>
+            <input type="text" placeholder="请输入您所在的城市/区" required>
+          </div>
+          
+          <div class="form-item">
+            <label>可服务时间 *</label>
+            <select required>
+              <option value="">请选择</option>
+              <option value="weekday">工作日</option>
+              <option value="weekend">周末</option>
+              <option value="both">工作日和周末都可以</option>
+              <option value="flexible">时间灵活</option>
+            </select>
+          </div>
+          
+          <div class="form-item">
+            <label>感兴趣的志愿工作 *</label>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem; margin-top: 0.5rem;">
+              <label class="checkbox-wrapper">
+                <input type="checkbox" name="interest" value="care"> 日常照料
+              </label>
+              <label class="checkbox-wrapper">
+                <input type="checkbox" name="interest" value="event"> 活动组织
+              </label>
+              <label class="checkbox-wrapper">
+                <input type="checkbox" name="interest" value="promo"> 宣传推广
+              </label>
+              <label class="checkbox-wrapper">
+                <input type="checkbox" name="interest" value="professional"> 专业支持
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-item">
+            <label>是否有养宠经验</label>
+            <select>
+              <option value="no">没有</option>
+              <option value="yes">有</option>
+              <option value="currently">目前正在养宠</option>
+            </select>
+          </div>
+          
+          <div class="form-item">
+            <label>自我介绍 / 申请理由 *</label>
+            <textarea placeholder="请简单介绍一下自己，以及为什么想成为志愿者..." style="height: 120px;" required></textarea>
+          </div>
+          
+          <div class="form-item">
+            <label class="checkbox-wrapper" style="margin-bottom: 1rem;">
+              <input type="checkbox" required>
+              <span>我承诺遵守志愿者守则，认真履行志愿职责</span>
+            </label>
+          </div>
+          
+          <div class="form-item">
+            <button type="submit" class="btn" style="width: 100%;">提交申请</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 常见问题 -->
+    <div class="faq-section">
+      <h2 class="section-title">常见问题</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <h3>Q: 成为志愿者需要收费吗？</h3>
+          <p>A: 完全免费！我们是公益组织，不收取任何费用。</p>
+        </div>
+        <div class="faq-item">
+          <h3>Q: 每周需要投入多少时间？</h3>
+          <p>A: 根据您的时间安排，一般建议每周至少4-8小时。时间灵活，可以协商。</p>
+        </div>
+        <div class="faq-item">
+          <h3>Q: 没有养宠经验可以参加吗？</h3>
+          <p>A: 当然可以！我们会提供培训和指导，帮助您快速上手。</p>
+        </div>
+        <div class="faq-item">
+          <h3>Q: 志愿者有什么福利？</h3>
+          <p>A: 包括志愿服务证书、专业培训、团队活动、优先领养权等。</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer>
+    <div class="footer-wrap">
+      <div class="footer-item">
+        <h4>联系我们</h4>
+        <p>📧 邮箱：adopt@petlove.com</p>
+        <p>📍 地址：爱心市温暖街123号宠物救助中心</p>
+        <p>📱 热线：400-123-4567</p>
+      </div>
+      <div class="footer-item">
+        <h4>平台服务</h4>
+        <p>领养流程指南</p>
+        <p>宠物救助合作</p>
+        <p>爱心捐赠通道</p>
+      </div>
+      <div class="footer-item">
+        <h4>关注我们</h4>
+        <p>微博：@爱心领养平台</p>
+        <p>公众号：宠物之家救助站</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2025 爱心宠物领养平台 版权所有 | 京ICP备XXXXXXXX号
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    document.getElementById('volunteerForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      toast('申请提交成功！我们会尽快与您联系');
+      setTimeout(() => {
+        location.href = 'about.html';
+      }, 1500);
+    });
+  </script>
+</body>
+</html>

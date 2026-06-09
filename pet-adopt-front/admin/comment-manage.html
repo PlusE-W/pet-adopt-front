@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评论管理 - 后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 管理员后台</div>
+      <ul class="nav-menu">
+        <li><a href="pet-manage.html">宠物管理</a></li>
+        <li><a href="apply-manage.html">申请管理</a></li>
+        <li><a href="user-manage.html">用户管理</a></li>
+        <li><a href="comment-manage.html">评论管理</a></li>
+        <li><a href="../index.html">返回首页</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="table-box">
+      <h2>评论列表</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>评论ID</th>
+            <th>用户</th>
+            <th>宠物</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody id="commentTable">
+          <!-- 动态渲染 -->
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script>
+    // 管理员权限验证
+    (function() {
+      const isAdmin = sessionStorage.getItem("isAdmin");
+      if (!isAdmin || isAdmin !== "true") {
+        alert("无权访问，请先通过管理员入口登录！");
+        location.href = "../login.html";
+        return;
+      }
+    })();
+
+    // 渲染评论列表
+    function renderTable(list) {
+      let html = "";
+      list.forEach(comment=>{
+        html += `
+        <tr>
+          <td>${comment.id}</td>
+          <td>${comment.nickname}</td>
+          <td>${comment.petName}</td>
+          <td>${comment.content}</td>
+          <td>${comment.createTime}</td>
+          <td>
+            <button class="btn" style="background:#f44336" onclick="delComment(${comment.id})">删除</button>
+          </td>
+        </tr>
+        `;
+      });
+      document.getElementById("commentTable").innerHTML = html;
+    }
+
+    // 调用后端接口获取评论列表
+    async function loadComments() {
+      const res = await get("/comment/admin/list");
+      if(res.code === 200){
+        renderTable(res.data);
+      }
+    }
+
+    // 删除评论
+    async function delComment(id) {
+      if(!confirm("确定要删除该评论吗？")) return;
+      const res = await del(`/comment/delete?id=${id}`);
+      if(res.code === 200){
+        toast("删除成功");
+        loadComments();
+      }else{
+        toast(res.msg, false);
+      }
+    }
+
+    // 页面加载时调用
+    loadComments();
+  </script>
+</body>
+</html>

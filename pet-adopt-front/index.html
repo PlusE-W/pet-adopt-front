@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物领养平台 - 首页</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- 导航栏顶部独立图片 -->
+  <div class="top-fixed-img">
+    <img src="images/banner1.jpg" alt="顶部海报">
+  </div>
+
+  <!-- 导航栏 -->
+  <header>
+    <div class="nav">
+      <div class="logo">爱心宠物领养</div>
+      <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <a href="process.html">领养流程</a>
+        <a href="story.html">领养故事</a>
+        <a href="about.html">关于我们</a>
+        <a href="login.html">登录</a>
+        <a href="register.html">注册</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <!-- 顶部自动轮播图 -->
+    <div class="banner-swiper" id="swiper">
+      <!-- 第1张：横幅图（无文字） -->
+      <div class="swiper-item active">
+        <img src="images/banner4.jpg" alt="萌宠上线">
+      </div>
+      <!-- 第2张 -->
+      <div class="swiper-item">
+        <img src="images/banner2.jpg" alt="爱心陪伴" class="banner-cover">
+        <div class="swiper-text">
+          <h1>陪伴是最长情的告白</h1>
+          <p>选择一只宠物，收获一生的治愈与快乐</p>
+          <a href="#process" class="swiper-btn">了解流程</a>
+        </div>
+      </div>
+      <!-- 第3张 -->
+      <div class="swiper-item">
+        <img src="images/banner3.jpg" alt="暖心救助" class="banner-cover">
+        <div class="swiper-text">
+          <h1>携手守护小生命</h1>
+          <p>汇聚点滴爱心，让世界多一份温柔</p>
+          <a href="#story" class="swiper-btn">领养故事</a>
+        </div>
+      </div>
+      <!-- 轮播指示器 -->
+      <div class="swiper-dots">
+        <div class="dot active" data-index="0"></div>
+        <div class="dot" data-index="1"></div>
+        <div class="dot" data-index="2"></div>
+      </div>
+    </div>
+
+    <!-- 宠物领养区域 -->
+    <h2 class="section-title" id="pet">可领养宠物</h2>
+    <div class="filter-tabs">
+      <div class="filter-tab active" onclick="filterPets('all')">全部萌宠</div>
+      <div class="filter-tab" onclick="filterPets('猫')">🐱 猫咪</div>
+      <div class="filter-tab" onclick="filterPets('狗')">🐶 狗狗</div>
+      <div class="filter-tab" onclick="filterPets('其他')">🐹 其他宠物</div>
+    </div>
+
+    <div class="pet-list" id="petList"></div>
+
+    <!-- 快速链接 -->
+    <div class="quick-links">
+      <a href="process.html" class="quick-link-card">
+        <div class="link-icon">📋</div>
+        <h3>领养流程</h3>
+        <p>了解详细的领养步骤和注意事项</p>
+      </a>
+      <a href="story.html" class="quick-link-card">
+        <div class="link-icon">💕</div>
+        <h3>领养故事</h3>
+        <p>阅读温暖的领养故事，感受爱的力量</p>
+      </a>
+      <a href="about.html" class="quick-link-card">
+        <div class="link-icon">🏠</div>
+        <h3>关于我们</h3>
+        <p>了解平台使命和团队介绍</p>
+      </a>
+    </div>
+  </main>
+
+  <!-- 页脚 -->
+  <footer>
+    <div class="footer-wrap">
+      <div class="footer-item">
+        <h4>联系我们</h4>
+        <p>📧 邮箱：adopt@petlove.com</p>
+        <p>📍 地址：爱心市温暖街123号宠物救助中心</p>
+        <p>📱 热线：400-123-4567</p>
+      </div>
+      <div class="footer-item">
+        <h4>平台服务</h4>
+        <p>领养流程指南</p>
+        <p>宠物救助合作</p>
+        <p>爱心捐赠通道</p>
+      </div>
+      <div class="footer-item">
+        <h4>关注我们</h4>
+        <p>微博：@爱心领养平台</p>
+        <p>公众号：宠物之家救助站</p>
+      </div>
+    </div>
+    <div class="copyright">
+      © 2025 爱心宠物领养平台 版权所有 | 京ICP备XXXXXXXX号
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+    // 轮播逻辑 6秒切换
+    const items = document.querySelectorAll('.swiper-item');
+    const dots = document.querySelectorAll('.dot');
+    let index = 0;
+    const total = items.length;
+
+    function changeSwiper(idx) {
+      items.forEach(item => item.classList.remove('active'));
+      dots.forEach(dot => dot.classList.remove('active'));
+      items[idx].classList.add('active');
+      dots[idx].classList.add('active');
+    }
+
+    function autoPlay() {
+      index++;
+      if(index >= total) index = 0;
+      changeSwiper(index);
+    }
+    let timer = setInterval(autoPlay, 8000)
+
+    dots.forEach((dot, i) => {
+      dot.addEventListener('click', () => {
+        index = i;
+        changeSwiper(index);
+      });
+    });
+
+    // 宠物数据与筛选
+    const allPets = [
+      {id:1, name:"大橘", type:"猫", age:"1岁", img:"images/cat1.jpg", status:"待领养"},
+      {id:2, name:"阿黄", type:"狗", age:"2岁", img:"images/dog1.jpg", status:"待领养"},
+      {id:3, name:"绵绵", type:"猫", age:"8个月", img:"images/cat2.jpg", status:"已领养"},
+      {id:4, name:"仓仓", type:"其他", age:"6个月", img:"images/hamster.jpg", status:"待领养"},
+      {id:5, name:"小白", type:"狗", age:"1岁半", img:"images/dog2.jpg", status:"待领养"},
+      {id:6, name:"灰灰", type:"猫", age:"10个月", img:"images/cat3.jpg", status:"待领养"}
+    ];
+
+    function renderList(list) {
+      let html = "";
+      list.forEach(pet=>{
+        html += `
+        <div class="pet-card">
+          <img src="${pet.img}" alt="${pet.name}">
+          <div class="pet-info">
+            <h3>${pet.name}</h3>
+            <p>品种：${pet.type}</p>
+            <p>年龄：${pet.age}</p>
+            <span class="pet-status ${pet.status}">${pet.status}</span>
+            <br>
+            <a href="detail.html?id=${pet.id}" class="btn">查看详情</a>
+          </div>
+        </div>
+        `;
+      });
+      document.getElementById("petList").innerHTML = html;
+    }
+
+    function filterPets(type) {
+      const tabs = document.querySelectorAll('.filter-tab');
+      tabs.forEach(tab => tab.classList.remove('active'));
+      event.target.classList.add('active');
+      let filterData = type === 'all' ? allPets : allPets.filter(item => item.type === type);
+      renderList(filterData);
+    }
+
+    window.onload = function(){
+      renderList(allPets);
+    }
+  </script>
+</body>
+</html>
