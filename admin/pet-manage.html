@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物管理 - 管理员后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #eee; }
+    .admin-menu { margin: 1rem 0; }
+    .admin-menu a { margin-right: 1rem; padding: 0.5rem 1rem; background: #ff7f50; color: white; border-radius: 4px; text-decoration: none; }
+    .table-box { margin: 2rem 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #eee; padding: 0.8rem; text-align: center; }
+    th { background: #f8f8f8; }
+    .btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-edit { background: #409eff; color: #fff; }
+    .btn-del { background: #f56c6c; color: #fff; }
+
+    .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); justify-content: center; align-items: center; z-index: 999; }
+    .modal-content { background: white; padding: 2rem; border-radius: 8px; width: 400px; }
+    .modal-content h3 { margin-top: 0; }
+    .form-group { margin-bottom: 1rem; }
+    .form-group label { display: block; margin-bottom: 0.5rem; }
+    .form-group input, .form-group select { width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; }
+    .modal-footer { text-align: right; margin-top: 1.5rem; }
+    .modal-footer button { margin-left: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <h1>🐾 宠物领养平台 - 管理员后台</h1>
+    <button class="btn" onclick="logout()">退出登录</button>
+  </div>
+
+  <div class="container">
+    <div class="admin-menu">
+      <a href="pet-manage.html" style="background:#333">宠物管理</a>
+      <a href="user-manage.html">用户管理</a>
+      <a href="comment-manage.html">评论管理</a>
+    </div>
+
+    <div class="table-box">
+      <h2>宠物列表</h2>
+      <table id="petTable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>名称</th>
+            <th>种类</th>
+            <th>年龄</th>
+            <th>状态</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="6">加载中...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 编辑弹窗 -->
+  <div class="modal" id="editModal">
+    <div class="modal-content">
+      <h3>编辑宠物信息</h3>
+      <div class="form-group">
+        <label>宠物ID（只读）</label>
+        <input type="text" id="editId" readonly>
+      </div>
+      <div class="form-group">
+        <label>宠物名称</label>
+        <input type="text" id="editName" required>
+      </div>
+      <div class="form-group">
+        <label>种类</label>
+        <input type="text" id="editSpecies" required>
+      </div>
+      <div class="form-group">
+        <label>年龄</label>
+        <input type="number" id="editAge" required min="0">
+      </div>
+      <div class="form-group">
+        <label>状态</label>
+        <select id="editStatus">
+          <option value="待领养">待领养</option>
+          <option value="已领养">已领养</option>
+          <option value="下架">下架</option>
+        </select>
+      </div>
+      <div class="modal-footer">
+        <button class="btn" onclick="closeModal()">取消</button>
+        <button class="btn btn-edit" onclick="saveEdit()">保存修改</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    window.onload = async function () {
+      if (!checkAdminAuth()) return;
+      await loadPetList();
+    };
+
+    function checkAdminAuth() {
+      const isLogin = sessionStorage.getItem("isLogin");
+      const isAdmin = sessionStorage.getItem("isAdmin");
+      if (isLogin !== "true" || isAdmin !== "true") {
+        alert("无权限访问，请先登录管理员账号");
+        location.href = "../login.html";
+        return false;
+      }
+      return true;
+    }
+
+    // 加载宠物列表
+    async function loadPetList() {
+      try {
+        const res = await get("/api/pet/list?page=1&size=100");
+        const list = res.data?.content || [];
+        const tbody = document.querySelector("#petTable tbody");
+        if (list.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='6'>暂无数据</td></tr>";
+          return;
+        }
+        let html = "";
+        list.forEach(pet => {
+          html += `
+            <tr>
+              <td>${pet.id}</td>
+              <td>${pet.name}</td>
+              <td>${pet.species}</td>
+              <td>${pet.age}</td>
+              <td>${pet.status}</td>
+              <td>
+                <button class="btn btn-edit" onclick="openEditModal(${pet.id}, '${pet.name}', '${pet.species}', ${pet.age}, '${pet.status}')">编辑</button>
+                <button class="btn btn-del" onclick="deletePet(${pet.id})">删除</button>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (e) {
+        console.error(e);
+        document.querySelector("#petTable tbody").innerHTML = "<tr><td colspan='6'>加载失败</td></tr>";
+      }
+    }
+
+    function openEditModal(id, name, species, age, status) {
+      document.getElementById("editId").value = id;
+      document.getElementById("editName").value = name;
+      document.getElementById("editSpecies").value = species;
+      document.getElementById("editAge").value = age;
+      document.getElementById("editStatus").value = status;
+      document.getElementById("editModal").style.display = "flex";
+    }
+
+    function closeModal() {
+      document.getElementById("editModal").style.display = "none";
+    }
+
+    // 保存修改
+    async function saveEdit() {
+      const id = document.getElementById("editId").value;
+      const name = document.getElementById("editName").value.trim();
+      const species = document.getElementById("editSpecies").value.trim();
+      const age = parseInt(document.getElementById("editAge").value);
+      const status = document.getElementById("editStatus").value;
+
+      if (!name || !species || isNaN(age)) {
+        toast("请填写完整信息", false);
+        return;
+      }
+
+      const data = {
+        id: parseInt(id),
+        name: name,
+        species: species,
+        age: age,
+        status: status
+      };
+
+      try {
+        const response = await fetch("http://localhost:8080/api/admin/pet/update", {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8"
+          },
+          body: JSON.stringify(data),
+          credentials: "include"
+        });
+
+        const result = await response.json();
+        if (response.ok && result.code === 200) {
+          toast("修改成功");
+          closeModal();
+          loadPetList();
+        } else {
+          toast("修改失败：" + (result.msg || "未知错误"), false);
+        }
+      } catch (err) {
+        console.error(err);
+        toast("请求异常，修改失败", false);
+      }
+    }
+
+    // 删除宠物
+    async function deletePet(id) {
+      if (!confirm("确定删除？")) return;
+      try {
+        await del(`/api/admin/pet/${id}`);
+        toast("删除成功");
+        loadPetList();
+      } catch (err) {
+        toast("删除失败", false);
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem("isLogin");
+      sessionStorage.removeItem("isAdmin");
+      location.href = "../login.html";
+    }
+  </script>
+</body>
+</html>

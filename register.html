@@ -223,33 +223,29 @@
       registerBtn.disabled = true;
       registerBtn.innerHTML = '<span class="loading"></span> 注册中...';
 
+      // ========== 只改这里两行 ==========
       const data = {
-        username: username.value,
+        account: username.value,   // 前端 username → 后端 account
         password: password.value,
         nickname: document.getElementById("nickname").value,
         phone: phone.value
       };
 
       try {
-        // 调用后端注册接口
-        const res = await post("/user/register", data);
+        // 接口路径加上 /api
+        await post("/api/user/register", data);
+        // =================================
+
+        toast("注册成功，请登录");
+        document.querySelector('.form-box').classList.add('success-animation');
         
-        if (res.code === 200) {
-          toast("注册成功，请登录");
-          
-          // 添加成功动画
-          document.querySelector('.form-box').classList.add('success-animation');
-          
-          setTimeout(() => {
-            location.href = "login.html";
-          }, 800);
-        } else {
-          toast(res.msg, false);
-          registerBtn.disabled = false;
-          registerBtn.innerHTML = '<span>立即注册</span>';
-        }
+        setTimeout(() => {
+          location.href = "login.html";
+        }, 800);
       } catch (error) {
-        toast("网络错误，请稍后重试", false);
+        console.error(error);
+        toast(error.message || "网络错误，请稍后重试", false);
+      } finally {
         registerBtn.disabled = false;
         registerBtn.innerHTML = '<span>立即注册</span>';
       }

@@ -44,20 +44,22 @@
 
   <script src="../js/main.js"></script>
   <script>
-    // 管理员权限验证
-    (function() {
-      const isAdmin = sessionStorage.getItem("isAdmin");
-      if (!isAdmin || isAdmin !== "true") {
-        alert("无权访问，请先通过管理员入口登录！");
-        location.href = "../login.html";
-        return;
-      }
-    })();
+    // 页面初始化 + 管理员权限校验
+    window.onload = async function() {
+      const isAdmin = await checkAdmin();
+      if (!isAdmin) return;
+      await loadApplies();
+    };
 
     // 渲染申请列表
     function renderTable(list) {
       let html = "";
-      list.forEach(apply=>{
+      if (!list || list.length === 0) {
+        html = '<tr><td colspan="7" style="text-align:center">暂无申请数据</td></tr>';
+        document.getElementById("applyTable").innerHTML = html;
+        return;
+      }
+      list.forEach(apply => {
         html += `
         <tr>
           <td>${apply.id}</td>
@@ -78,28 +80,29 @@
       document.getElementById("applyTable").innerHTML = html;
     }
 
-    // 调用后端接口获取申请列表
+    // 加载申请列表
     async function loadApplies() {
-      const res = await get("/adopt/list");
-      if(res.code === 200){
+      try {
+        const res = await get("/api/adopt/list");
         renderTable(res.data);
+      } catch (err) {
+        toast("加载申请列表失败：" + err.message, false);
       }
     }
 
-    // 处理申请
+    // 审核申请
     async function handleApply(id, action) {
-      if(!confirm(`确定要${action==='pass'?'通过':'驳回'}该申请吗？`)) return;
-      const res = await put(`/adopt/update?id=${id}&action=${action}`);
-      if(res.code === 200){
+      const text = action === 'pass' ? '通过' : '驳回';
+      if (!confirm(`确定要${text}该申请吗？`)) return;
+
+      try {
+        await put(`/api/adopt/update?id=${id}&action=${action}`);
         toast("操作成功");
-        loadApplies();
-      }else{
-        toast(res.msg, false);
+        await loadApplies();
+      } catch (err) {
+        toast(err.message || "操作失败", false);
       }
     }
-
-    // 页面加载时调用
-    loadApplies();
   </script>
 </body>
 </html>

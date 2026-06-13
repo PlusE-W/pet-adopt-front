@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>领养申请</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 爱心领养</div>
+      <ul class="nav-menu">
+        <li><a href="index.html">首页</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <div class="form-box">
+      <h2>领养申请</h2>
+      <form id="applyForm">
+        <input type="hidden" id="petId">
+        <div class="form-item">
+          <label>申请理由</label>
+          <textarea id="reason" placeholder="请简单说明你为什么想领养，以及你的饲养条件" required></textarea>
+        </div>
+        <div class="form-item">
+          <label>联系地址</label>
+          <input type="text" id="address" placeholder="请输入详细联系地址" required>
+        </div>
+        <div class="form-item">
+          <button type="submit" class="btn" style="width:100%" id="submitBtn">提交申请</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
+  <script>
+    const petId = new URLSearchParams(location.search).get("petId");
+    document.getElementById("petId").value = petId;
+
+    document.getElementById("applyForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      // 登录校验
+      const isLogin = await checkLogin();
+      if (!isLogin) return;
+
+      const reason = document.getElementById("reason").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const submitBtn = document.getElementById("submitBtn");
+
+      // 前端非空校验
+      if (!reason) {
+        toast("请填写申请理由", false);
+        document.getElementById("reason").focus();
+        return;
+      }
+      if (!address) {
+        toast("请填写联系地址", false);
+        document.getElementById("address").focus();
+        return;
+      }
+
+      // 按钮加载状态
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = "提交中...";
+
+      try {
+        // 对接后端接口 /api/adopt/add
+        await post("/api/adopt/add", {
+          petId: petId,
+          reason: reason,
+          address: address
+        });
+
+        toast("申请提交成功，等待管理员审核");
+        setTimeout(() => {
+          location.href = "index.html";
+        }, 1200);
+      } catch (err) {
+        toast(err.message || "提交失败，请稍后重试", false);
+      } finally {
+        // 恢复按钮
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "提交申请";
+      }
+    });
+  </script>
+</body>
+</html>

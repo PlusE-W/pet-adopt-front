@@ -7,12 +7,10 @@
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <!-- 导航栏顶部独立图片 -->
   <div class="top-fixed-img">
     <img src="images/banner1.jpg" alt="顶部海报">
   </div>
 
-  <!-- 导航栏 -->
   <header>
     <div class="nav">
       <div class="logo">爱心宠物领养</div>
@@ -28,13 +26,10 @@
   </header>
 
   <main class="container">
-    <!-- 顶部自动轮播图 -->
     <div class="banner-swiper" id="swiper">
-      <!-- 第1张：横幅图（无文字） -->
       <div class="swiper-item active">
         <img src="images/banner4.jpg" alt="萌宠上线">
       </div>
-      <!-- 第2张 -->
       <div class="swiper-item">
         <img src="images/banner2.jpg" alt="爱心陪伴" class="banner-cover">
         <div class="swiper-text">
@@ -43,7 +38,6 @@
           <a href="#process" class="swiper-btn">了解流程</a>
         </div>
       </div>
-      <!-- 第3张 -->
       <div class="swiper-item">
         <img src="images/banner3.jpg" alt="暖心救助" class="banner-cover">
         <div class="swiper-text">
@@ -52,7 +46,6 @@
           <a href="#story" class="swiper-btn">领养故事</a>
         </div>
       </div>
-      <!-- 轮播指示器 -->
       <div class="swiper-dots">
         <div class="dot active" data-index="0"></div>
         <div class="dot" data-index="1"></div>
@@ -60,7 +53,6 @@
       </div>
     </div>
 
-    <!-- 宠物领养区域 -->
     <h2 class="section-title" id="pet">可领养宠物</h2>
     <div class="filter-tabs">
       <div class="filter-tab active" onclick="filterPets('all')">全部萌宠</div>
@@ -71,7 +63,6 @@
 
     <div class="pet-list" id="petList"></div>
 
-    <!-- 快速链接 -->
     <div class="quick-links">
       <a href="process.html" class="quick-link-card">
         <div class="link-icon">📋</div>
@@ -91,7 +82,6 @@
     </div>
   </main>
 
-  <!-- 页脚 -->
   <footer>
     <div class="footer-wrap">
       <div class="footer-item">
@@ -119,7 +109,6 @@
 
   <script src="js/main.js"></script>
   <script>
-    // 轮播逻辑 6秒切换
     const items = document.querySelectorAll('.swiper-item');
     const dots = document.querySelectorAll('.dot');
     let index = 0;
@@ -146,25 +135,42 @@
       });
     });
 
-    // 宠物数据与筛选
-    const allPets = [
-      {id:1, name:"大橘", type:"猫", age:"1岁", img:"images/cat1.jpg", status:"待领养"},
-      {id:2, name:"阿黄", type:"狗", age:"2岁", img:"images/dog1.jpg", status:"待领养"},
-      {id:3, name:"绵绵", type:"猫", age:"8个月", img:"images/cat2.jpg", status:"已领养"},
-      {id:4, name:"仓仓", type:"其他", age:"6个月", img:"images/hamster.jpg", status:"待领养"},
-      {id:5, name:"小白", type:"狗", age:"1岁半", img:"images/dog2.jpg", status:"待领养"},
-      {id:6, name:"灰灰", type:"猫", age:"10个月", img:"images/cat3.jpg", status:"待领养"}
-    ];
+    const BASE_IMG = "http://localhost:8080";
+    let currentType = "all";
+
+    async function loadPetList(type) {
+      try {
+        let url = "/api/pet/list";
+        if (type && type !== "all") {
+          url += `?species=${type}`;
+        }
+        const res = await get(url);
+        let petArr = [];
+        if (res.data && res.data.content && Array.isArray(res.data.content)) {
+          petArr = res.data.content;
+        } else if (Array.isArray(res.data)) {
+          petArr = res.data;
+        }
+        renderList(petArr);
+      } catch (err) {
+        toast("加载宠物数据失败：" + err.message, false);
+      }
+    }
 
     function renderList(list) {
       let html = "";
-      list.forEach(pet=>{
+      if (!list || list.length === 0) {
+        document.getElementById("petList").innerHTML = '<div style="text-align:center;padding:2rem;">暂无宠物信息</div>';
+        return;
+      }
+      list.forEach(pet => {
+        let imgSrc = pet.image ? (pet.image.startsWith("http") ? pet.image : BASE_IMG + pet.image) : "images/default-pet.png";
         html += `
         <div class="pet-card">
-          <img src="${pet.img}" alt="${pet.name}">
+          <img src="${imgSrc}" alt="${pet.name}">
           <div class="pet-info">
             <h3>${pet.name}</h3>
-            <p>品种：${pet.type}</p>
+            <p>品种：${pet.species}</p>
             <p>年龄：${pet.age}</p>
             <span class="pet-status ${pet.status}">${pet.status}</span>
             <br>
@@ -180,12 +186,12 @@
       const tabs = document.querySelectorAll('.filter-tab');
       tabs.forEach(tab => tab.classList.remove('active'));
       event.target.classList.add('active');
-      let filterData = type === 'all' ? allPets : allPets.filter(item => item.type === type);
-      renderList(filterData);
+      currentType = type;
+      loadPetList(type);
     }
 
     window.onload = function(){
-      renderList(allPets);
+      loadPetList("all");
     }
   </script>
 </body>

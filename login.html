@@ -73,6 +73,7 @@
     </div>
   </main>
 
+  <!-- 引入通用请求工具 -->
   <script src="js/main.js"></script>
   <script>
     const usernameInput = document.getElementById("username");
@@ -85,24 +86,12 @@
     // 管理员入口点击事件
     adminLink.addEventListener("click", (e) => {
       e.preventDefault();
-      
-      // 弹出输入框要求输入管理员密码
       const adminPassword = prompt("请输入管理员密码：");
-      
-      if (!adminPassword) {
-        return; // 用户取消
-      }
-      
-      // 这里设置管理员密码（实际项目中应该从后端验证）
-      const correctAdminPassword = "admin123"; // 示例密码，实际应该更安全
-      
+      if (!adminPassword) return;
+      const correctAdminPassword = "admin123";
       if (adminPassword === correctAdminPassword) {
         toast("验证成功，跳转到管理后台");
-        
-        // 保存管理员标记到 sessionStorage
         sessionStorage.setItem("isAdmin", "true");
-        
-        // 延迟跳转
         setTimeout(() => {
           location.href = "admin/pet-manage.html";
         }, 800);
@@ -111,7 +100,7 @@
       }
     });
 
-    // 实时验证
+    // 实时校验用户名
     usernameInput.addEventListener("input", () => {
       if (usernameInput.value.length > 0 && usernameInput.value.length < 3) {
         usernameTip.innerText = "用户名至少3个字符";
@@ -127,6 +116,7 @@
       }
     });
 
+    // 实时校验密码
     passwordInput.addEventListener("input", () => {
       if (passwordInput.value.length > 0 && passwordInput.value.length < 6) {
         passwordTip.innerText = "密码至少6个字符";
@@ -142,65 +132,59 @@
       }
     });
 
+    // 表单提交 - 核心登录逻辑
     document.getElementById("loginForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      
-      // 最终验证
+
+      // 前端基础校验
       if (usernameInput.value.length < 3) {
         toast("用户名至少3个字符", false);
         usernameInput.focus();
         return;
       }
-      
       if (passwordInput.value.length < 6) {
         toast("密码至少6个字符", false);
         passwordInput.focus();
         return;
       }
 
-      // 显示加载状态
+      // 加载状态
       loginBtn.disabled = true;
       loginBtn.innerHTML = '<span class="loading"></span> 登录中...';
 
-      const data = {
-        username: usernameInput.value,
-        password: passwordInput.value
-      };
-
       try {
-        // 调用后端登录接口
-        const res = await post("/user/login", data);
-        
-        if (res.code === 200) {
-          toast("登录成功");
-          
-          // 保存用户信息到cookie
-          document.cookie = "userId=" + res.data.id;
-          document.cookie = "token=" + res.data.token;
-          document.cookie = "role=" + res.data.role;
-          
-          // 如果勾选了记住我，设置较长的过期时间
-          if (document.getElementById("rememberMe").checked) {
-            const expiryDate = new Date();
-            expiryDate.setDate(expiryDate.getDate() + 30);
-            document.cookie = "userId=" + res.data.id + "; expires=" + expiryDate.toUTCString();
-            document.cookie = "token=" + res.data.token + "; expires=" + expiryDate.toUTCString();
-            document.cookie = "role=" + res.data.role + "; expires=" + expiryDate.toUTCString();
-          }
-          
-          // 添加成功动画
-          document.querySelector('.form-box').classList.add('success-animation');
-          
-          setTimeout(() => {
+        // 1. 接口路径 + 字段 完全匹配后端：/api/user/login  + {account, password}
+        const res = await post("/api/user/login", {
+          account: usernameInput.value,
+          password: passwordInput.value
+        });
+
+        toast("登录成功");
+        document.querySelector('.form-box').classList.add('success-animation');
+
+        // 先定义 user 变量，再使用
+        const user = res.data;
+        sessionStorage.setItem("isAdmin", user.role === 1 ? "true" : "false");
+        sessionStorage.setItem("isLogin", "true");
+
+        // ======================
+        // 管理员自动跳转（核心）
+        // ======================
+        setTimeout(() => {
+          if (user && user.role === 1) {
+            // 管理员 → 跳管理页面
+            location.href = "admin/pet-manage.html";
+          } else {
+            // 普通用户 → 跳首页
             location.href = "index.html";
-          }, 800);
-        } else {
-          toast(res.msg, false);
-          loginBtn.disabled = false;
-          loginBtn.innerHTML = '<span>立即登录</span>';
-        }
+          }
+        }, 800);
+
       } catch (error) {
-        toast("网络错误，请稍后重试", false);
+        console.error("登录异常：", error);
+        toast(error.message || "网络错误，请稍后重试", false);
+      } finally {
+        // 恢复按钮状态
         loginBtn.disabled = false;
         loginBtn.innerHTML = '<span>立即登录</span>';
       }

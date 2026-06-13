@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>宠物详情</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">爱心领养</div>
+      <div class="nav-menu">
+        <a href="index.html">首页</a>
+        <a href="login.html">登录</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="detail-box" id="detailBox"></div>
+    <div class="comment-box">
+      <h3>留言评论 💬</h3>
+      <div class="comment-input-area">
+        <textarea id="commentContent" placeholder="写下你对毛孩子的祝福或提问..." maxlength="500"></textarea>
+        <div class="char-counter"><span id="charCount">0</span>/500</div>
+        <button class="btn comment-submit-btn" onclick="addComment()" id="submitCommentBtn">
+          <span>📝 提交评论</span>
+        </button>
+      </div>
+      <div id="commentList" class="comment-list"></div>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 爱心领养平台 | 让每只毛孩子都有一个家</p>
+  </footer>
+
+  <script>
+    const petId = new URLSearchParams(location.search).get("id");
+    const BASE_URL = "http://localhost:8080";
+    const BASE_IMG = "http://localhost:8080";
+
+    window.onload = async function () {
+      if (!petId) {
+        alert("参数错误，返回首页");
+        location.href = "index.html";
+        return;
+      }
+      await loadPetDetail();
+      await loadComments();
+    };
+
+    async function loadPetDetail() {
+      try {
+        const res = await fetch(`${BASE_URL}/api/pet/${petId}`, {
+          credentials: "include"
+        });
+        const result = await res.json();
+        if (result.code === 200 && result.data) {
+          renderPet(result.data);
+        } else {
+          document.getElementById("detailBox").innerText = "暂无宠物数据";
+        }
+      } catch (e) {
+        document.getElementById("detailBox").innerText = "请求失败";
+        console.error(e);
+      }
+    }
+
+    function renderPet(pet) {
+      let img = pet.image || "";
+      if (!img.startsWith("http")) {
+        img = BASE_IMG + img;
+      }
+      const html = `
+        <img src="${img}" class="detail-img" alt="${pet.name || ''}">
+        <div class="detail-text">
+          <h2>${pet.name || "未知名称"}</h2>
+          <p><strong>🐾 种类：</strong>${pet.species || "未知"} ${pet.breed || ""}</p>
+          <p><strong>🎂 年龄：</strong>${pet.age || 0} 岁</p>
+          <p><strong>❤️ 健康状况：</strong>${pet.health || "未知"}</p>
+          <p><strong>📝 简介：</strong>${pet.description || "暂无介绍"}</p>
+          <p><strong>📌 状态：</strong>${pet.status || "未知"}</p>
+          ${pet.status === "待领养" ? `<a href="apply.html?petId=${pet.id}" class="btn">申请领养</a>` : ""}
+        </div>
+      `;
+      document.getElementById("detailBox").innerHTML = html;
+    }
+
+    async function loadComments() {
+      try {
+        const res = await fetch(`${BASE_URL}/api/comment/list?petId=${petId}`, {
+          credentials: "include"
+        });
+        const result = await res.json();
+        if (result.code === 200) {
+          renderComments(result.data || []);
+        }
+      } catch (e) {
+        console.error("加载评论失败", e);
+      }
+    }
+
+    function getAvatarLetter(name) {
+      return name ? name.charAt(0).toUpperCase() : "匿";
+    }
+
+    function formatTime(str) {
+      if (!str) return "";
+      return new Date(str).toLocaleString();
+    }
+
+    function renderComments(list) {
+      const box = document.getElementById("commentList");
+      if (list.length === 0) {
+        box.innerHTML = "<p>暂无评论</p>";
+        return;
+      }
+      let html = "";
+      list.forEach(item => {
+        html += `
+          <div class="comment-item">
+            <div class="comment-header">
+              <div class="avatar">${getAvatarLetter(item.nickname)}</div>
+              <span>${item.nickname || "匿名用户"} ${formatTime(item.createTime)}</span>
+            </div>
+            <div class="comment-content">${item.content}</div>
+            <button onclick="doLike(${item.id})">点赞 ${item.likes || 0}</button>
+          </div>
+        `;
+      });
+      box.innerHTML = html;
+    }
+
+    async function doLike(cid) {
+      try {
+        await fetch(`${BASE_URL}/api/comment/like`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ id: cid }),
+          credentials: "include"
+        });
+        loadComments();
+      } catch (e) {
+        alert("点赞失败");
+      }
+    }
+
+    async function addComment() {
+      const content = document.getElementById("commentContent").value.trim();
+      if (!content) {
+        alert("请输入评论内容");
+        return;
+      }
+      try {
+        const res = await fetch(`${BASE_URL}/api/comment/add`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ petId: petId, content: content }),
+          credentials: "include"
+        });
+        
+        const result = await res.json();
+        if (result.code === 200) {
+          document.getElementById("commentContent").value = "";
+          alert("评论成功！");
+          loadComments();
+        } else {
+          alert(result.msg || "评论失败");
+        }
+      } catch (e) {
+        alert("评论失败：网络或跨域异常");
+        console.error(e);
+      }
+    }
+
+    const textarea = document.getElementById("commentContent");
+    const count = document.getElementById("charCount");
+    textarea.addEventListener("input", function () {
+      count.innerText = this.value.length;
+    });
+  </script>
+</body>
+</html>

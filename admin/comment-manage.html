@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>评论管理 - 管理员后台</title>
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .admin-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #eee; }
+    .admin-menu { margin: 1rem 0; }
+    .admin-menu a { margin-right: 1rem; padding: 0.5rem 1rem; background: #ff7f50; color: white; border-radius: 4px; text-decoration: none; }
+    .table-box { margin: 2rem 0; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #eee; padding: 0.8rem; text-align: center; }
+    th { background: #f8f8f8; }
+    .btn { padding: 0.4rem 0.8rem; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-del { background: #f56c6c; color: #fff; }
+  </style>
+</head>
+<body>
+  <div class="admin-header">
+    <h1>🐾 宠物领养平台 - 评论管理</h1>
+    <button class="btn" onclick="logout()">退出登录</button>
+  </div>
+
+  <div class="container">
+    <div class="admin-menu">
+      <a href="pet-manage.html">宠物管理</a>
+      <a href="user-manage.html">用户管理</a>
+      <a href="comment-manage.html" style="background:#333">评论管理</a>
+    </div>
+
+    <div class="table-box">
+      <h2>全部评论列表</h2>
+      <table id="commentTable">
+        <thead>
+          <tr>
+            <th>评论ID</th>
+            <th>关联宠物ID</th>
+            <th>评论人昵称</th>
+            <th>评论内容</th>
+            <th>评论时间</th>
+            <th>操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td colspan="6">加载中...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="../js/main.js"></script>
+  <script>
+    window.onload = async function () {
+      // 管理员权限校验
+      if (!checkAdminAuth()) return;
+      // 加载评论数据
+      await loadCommentList();
+    };
+
+    // 校验登录+管理员身份
+    function checkAdminAuth() {
+      const isLogin = sessionStorage.getItem("isLogin");
+      const isAdmin = sessionStorage.getItem("isAdmin");
+      if (isLogin !== "true" || isAdmin !== "true") {
+        alert("无权限访问，请先登录管理员账号");
+        location.href = "../login.html";
+        return false;
+      }
+      return true;
+    }
+
+    // 加载数据库评论数据
+    async function loadCommentList() {
+      try {
+        const res = await get("/api/comment/listAll");
+        const commentList = res.data || [];
+        const tbody = document.querySelector("#commentTable tbody");
+
+        if (commentList.length === 0) {
+          tbody.innerHTML = "<tr><td colspan='6'>暂无评论数据</td></tr>";
+          return;
+        }
+
+        let html = "";
+        commentList.forEach(item => {
+          html += `
+            <tr>
+              <td>${item.id}</td>
+              <td>${item.petId}</td>
+              <td>${item.nickname}</td>
+              <td style="text-align:left">${item.content}</td>
+              <td>${item.createTime}</td>
+              <td>
+                <button class="btn btn-del" onclick="deleteComment(${item.id})">删除</button>
+              </td>
+            </tr>
+          `;
+        });
+        tbody.innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        document.querySelector("#commentTable tbody").innerHTML = "<tr><td colspan='6'>数据加载失败</td></tr>";
+      }
+    }
+
+    // 删除评论（修改接口地址，对接后端 /api/comment/admin/{id}）
+    async function deleteComment(id) {
+      if (!confirm("确定删除该评论？")) return;
+      try {
+        await del(`/api/comment/admin/${id}`);
+        toast("删除成功");
+        loadCommentList();
+      } catch (err) {
+        toast("删除失败", false);
+      }
+    }
+
+    // 退出登录
+    function logout() {
+      sessionStorage.removeItem("isLogin");
+      sessionStorage.removeItem("isAdmin");
+      location.href = "../login.html";
+    }
+  </script>
+</body>
+</html>

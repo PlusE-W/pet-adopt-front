@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>编辑宠物</title>
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+  <header>
+    <div class="nav">
+      <div class="logo">🐾 管理员后台</div>
+      <ul class="nav-menu">
+        <li><a href="pet-manage.html">宠物管理</a></li>
+        <li><a href="../index.html">返回首页</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="form-box">
+      <h2>编辑宠物信息</h2>
+      <form id="editPetForm">
+        <input type="hidden" id="petId">
+        <div class="form-item">
+          <label for="name">宠物名称</label>
+          <input type="text" id="name" placeholder="请输入宠物名称" required>
+        </div>
+        <div class="form-item">
+          <label for="type">宠物种类</label>
+          <select id="type" required>
+            <option value="">请选择种类</option>
+            <option value="猫">猫咪</option>
+            <option value="狗">狗狗</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <label for="age">年龄</label>
+          <input type="text" id="age" placeholder="例如：1岁、6个月" required>
+        </div>
+        <div class="form-item">
+          <label for="image">图片路径</label>
+          <input type="text" id="image" placeholder="例：/upload/cat1.jpg" required>
+          <small>填写 /upload/ 开头的相对路径</small>
+        </div>
+        <div class="form-item">
+          <label for="health">健康状况</label>
+          <input type="text" id="health" placeholder="例如：已打疫苗，健康活泼">
+        </div>
+        <div class="form-item">
+          <label for="intro">简介</label>
+          <textarea id="intro" placeholder="宠物简介"></textarea>
+        </div>
+        <div class="form-item">
+          <label for="status">状态</label>
+          <select id="status" required>
+            <option value="待领养">待领养</option>
+            <option value="已领养">已领养</option>
+          </select>
+        </div>
+        <div class="form-item">
+          <button type="submit" class="btn" style="width:100%" id="submitBtn">保存修改</button>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  <script src="../js/main.js"></script>
+  <script>
+    let petId = new URLSearchParams(location.search).get("id");
+
+    window.onload = async function(){
+      const isAdmin = await checkAdmin();
+      if(!isAdmin) return;
+      // 回显原有数据
+      await loadPetInfo();
+    };
+
+    // 加载宠物原有数据
+    async function loadPetInfo(){
+      try {
+        const res = await get(`/api/admin/pet/${petId}`);
+        const pet = res.data;
+        document.getElementById("petId").value = pet.id;
+        document.getElementById("name").value = pet.name;
+        document.getElementById("type").value = pet.species;
+        document.getElementById("age").value = pet.age;
+        document.getElementById("image").value = pet.image;
+        document.getElementById("health").value = pet.health || "";
+        document.getElementById("intro").value = pet.description || "";
+        document.getElementById("status").value = pet.status;
+      } catch (err) {
+        toast("数据加载失败", false);
+        location.href = "pet-manage.html";
+      }
+    }
+
+    // 提交编辑
+    document.getElementById("editPetForm").addEventListener("submit",async function(e){
+      e.preventDefault();
+      const submitBtn = document.getElementById("submitBtn");
+
+      const name = document.getElementById("name").value.trim();
+      const species = document.getElementById("type").value;
+      const age = document.getElementById("age").value.trim();
+      const image = document.getElementById("image").value.trim();
+      const health = document.getElementById("health").value.trim();
+      const description = document.getElementById("intro").value.trim();
+      const status = document.getElementById("status").value;
+
+      // 简单校验
+      if(!name || !species || !age || !image){
+        toast("请完善必填项", false);
+        return;
+      }
+      if (!image.startsWith("/upload/")) {
+        toast("图片路径格式错误", false);
+        return;
+      }
+
+      const data = {
+        id: petId,
+        name: name,
+        species: species,
+        age: age,
+        image: image,
+        health: health,
+        description: description,
+        status: status
+      };
+
+      try{
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = "保存中...";
+        await post("/api/admin/pet/update", data);
+        toast("修改成功");
+        setTimeout(()=>{
+          location.href = "pet-manage.html";
+        },1200);
+      }catch(err){
+        toast(err.message || "修改失败", false);
+      }finally{
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = "保存修改";
+      }
+    });
+  </script>
+</body>
+</html>
